@@ -23,7 +23,7 @@ class PWM_ESC {
         PULSE_MAX = max;
         bool armed;
         if (gpioInitialise() < 0){
-            // Enviar alguna alerta yo k se.
+            sleep(3) // aca hay que poner algun error
         }
         else{
             /*NOTA: el rango y la frecuencia se pueden poner así por pura coincidencia.
@@ -32,7 +32,7 @@ class PWM_ESC {
             gpioSetMode(GPIO, PI_OUTPUT);
             gpioSetPWMrange(GPIO, RANGE);
             gpioSetPWMfrequency(GPIO, FREQ);
-        }
+        };
     };
 
     bool arm_ESC(){
@@ -48,15 +48,15 @@ class PWM_ESC {
         flotantes del 1 al 100.*/
         if (speed > 100){
             speed = 100;
-        }
+        };
         if (speed < 0){
             speed = 0;
-        }
+        };
         speed=speed/100;
         int pWidth = int(PULSE_MIN + speed*(PULSE_MAX-PULSE_MIN));
         gpioServo(GPIO, pWidth);
         return true;
-    }
+    };
 
     bool stop(){
         /*Detiene el motor.*/
@@ -83,14 +83,14 @@ class bicopter {
     bicopter(int esc1, int esc2, int freq, int range, int min, int max){
         ESC_1 = PWM_ESC(esc1, freq, range, min, max);
         ESC_2 = PWM_ESC(esc2, freq, range, min, max);
-    }
+    };
 
     bool arm_motors(){
         /*Arma los motores uno por uno.*/
         ESC_1.arm_ESC();
         ESC_2.arm_ESC();
         return true;
-    }
+    };
 
     bool setSpeeds(int speed_1, int speed_2){
         /*establece las velocidades para los dos. Si quieres controlarlos individualmentes,
@@ -98,15 +98,15 @@ class bicopter {
         ESC_1.setSpeed(speed_1);
         ESC_2.setSpeed(speed_2);
         return true;
-    }
+    };
 
     bool stop(){
         /*Detiene los dos motores.*/
         ESC_1.stop();
         ESC_2.stop();
         return true;
-    }
+    };
 
-}
+};
 
 #endif
