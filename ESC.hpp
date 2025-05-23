@@ -40,7 +40,7 @@ class PWM_ESC {
         quizas se puede sin usar sleep, pero es necesario asegurar que se envie el pulso por un minimo de tiempo*/
         gpioServo(GPIO, PULSE_MIN);
         sleep(3);
-        return true
+        return true;
     };
 
     bool setSpeed(float speed){
@@ -61,6 +61,7 @@ class PWM_ESC {
     bool stop(){
         /*Detiene el motor.*/
         setSpeed(0);
+        return true;
     }
 };
 
@@ -103,6 +104,7 @@ class bicopter {
         /*Detiene los dos motores.*/
         ESC_1.stop();
         ESC_2.stop();
+        return true;
     }
 
 }
