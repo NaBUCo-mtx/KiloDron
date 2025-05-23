@@ -21,18 +21,12 @@ class PWM_ESC {
         RANGE = range;
         PULSE_MIN = min;
         PULSE_MAX = max;
-        bool armed;
-        if (gpioInitialise() < 0){
-            sleep(3) // aca hay que poner algun error
-        }
-        else{
-            /*NOTA: el rango y la frecuencia se pueden poner así por pura coincidencia.
-            Si trabajaremos con otros ESCs, el rango debe ser 1E6/freq; simplemente resulta
-            que en este caso son 1000 y 1000. Como 1E6/1000=1000, lo escribimos así*/ 
-            gpioSetMode(GPIO, PI_OUTPUT);
-            gpioSetPWMrange(GPIO, RANGE);
-            gpioSetPWMfrequency(GPIO, FREQ);
-        };
+        /*NOTA: el rango y la frecuencia se pueden poner así por pura coincidencia.
+        Si trabajaremos con otros ESCs, el rango debe ser 1E6/freq; simplemente resulta
+        que en este caso son 1000 y 1000. Como 1E6/1000=1000, lo escribimos así*/ 
+        gpioSetMode(GPIO, PI_OUTPUT);
+        gpioSetPWMrange(GPIO, RANGE);
+        gpioSetPWMfrequency(GPIO, FREQ);
     };
 
     bool arm_ESC(){
@@ -62,7 +56,7 @@ class PWM_ESC {
         /*Detiene el motor.*/
         setSpeed(0);
         return true;
-    }
+    };
 };
 
 
@@ -80,10 +74,11 @@ class bicopter {
     PWM_ESC ESC_2;
 
     public:
-    bicopter(int esc1, int esc2, int freq, int range, int min, int max){
-        PWM_ESC ESC_1(esc1, freq, range, min, max);
-        PWM_ESC ESC_2(esc2, freq, range, min, max);
-    };
+    bicopter(int esc1, int esc2, int freq, int range, int min, int max)
+    : ESC_1(esc1, freq, range, min, max),
+      ESC_2(esc2, freq, range, min, max),
+      gpio_1(esc1), gpio_2(esc2), FREQ(freq), RANGE(range), PULSE_MIN(min), PULSE_MAX(max)
+    {};
 
     bool arm_motors(){
         /*Arma los motores uno por uno.*/
@@ -92,7 +87,7 @@ class bicopter {
         return true;
     };
 
-    bool setSpeeds(int speed_1, int speed_2){
+    bool setSpeeds(float speed_1, float speed_2){
         /*establece las velocidades para los dos. Si quieres controlarlos individualmentes,
         considera utilizar la clase PWM_ESC directamente*/
         ESC_1.setSpeed(speed_1);
