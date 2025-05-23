@@ -81,8 +81,8 @@ class bicopter {
 
     public:
     bicopter(int esc1, int esc2, int freq, int range, int min, int max){
-        ESC_1 = PWM_ESC(esc1, freq, range, min, max);
-        ESC_2 = PWM_ESC(esc2, freq, range, min, max);
+        PWM_ESC ESC_1(esc1, freq, range, min, max);
+        PWM_ESC ESC_2(esc2, freq, range, min, max);
     };
 
     bool arm_motors(){
