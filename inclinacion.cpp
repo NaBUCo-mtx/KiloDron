@@ -74,7 +74,6 @@ int main() {
 
             printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f | Output: %.2f | Speeds: %.2f, %.2f\n",
                    roll, pitch, yaw, output, speed_1, speed_2);
-            usleep(10000); // 10 ms for smoother control (POSIX). For portability, consider std::this_thread::sleep_for.
             usleep(10000); // 10 ms for smoother control
         }
     } catch (const std::exception& e) {
