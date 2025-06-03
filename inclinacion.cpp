@@ -2,10 +2,25 @@
 #include "ESC.hpp"
 #include "HMC5883L.hpp"
 #include <cstdio>   // For printf
-#include <unistd.h> // For sleep
+#include <unistd.h> // For usleep
 #include <stdexcept> // For exception handling
+#include <vector>    // For std::vector in getSetPoint
+#include "megaHandler.hpp" // para obtener el setpoint
+#include <cstring> // For std::memcpy
 
-float getSetPoint(); // Forward declaration
+// Por el momento, para probar, retorna el valor leído del MegaHandler
+float getSetPoint() {
+    MegaHandler megaHandler(1, 8); // Bus 1, dirección 8
+    megaHandler.requestSensorData('R'); // Enviar comando para leer los valores del mando  
+    std::vector<uint8_t> data = megaHandler.readSensorData(3 * sizeof(float)); // Leer 3 floats
+    // por ahora, solo queremos probar la inclinación, así que tomamos el tercer valor
+    if (data.size() >= 3 * sizeof(float)) {
+        float value;
+        std::memcpy(&value, data.data() + 2 * sizeof(float), sizeof(float));
+        return value; // Retorna el tercer valor
+    }
+    return 0.0f;
+}
 
 int main() {
     // Inicializar pigpio
@@ -59,7 +74,7 @@ int main() {
 
             printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f | Output: %.2f | Speeds: %.2f, %.2f\n",
                    roll, pitch, yaw, output, speed_1, speed_2);
-
+            usleep(10000); // 10 ms for smoother control (POSIX). For portability, consider std::this_thread::sleep_for.
             usleep(10000); // 10 ms for smoother control
         }
     } catch (const std::exception& e) {
@@ -70,7 +85,3 @@ int main() {
     return 0;
 }
 
-float getSetPoint() {
-    // Por el momento, para probar, siempre retorna 0.0
-    return 0.0;
-}
