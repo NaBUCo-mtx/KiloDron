@@ -4,7 +4,6 @@
 #include <vector>
 #include <stdexcept>
 #include <cstdint>
-#include <string>
 
 class MegaHandler {
 public:
@@ -12,21 +11,38 @@ public:
     MegaHandler(unsigned bus, unsigned addr)
         : i2cBus(bus), i2cAddr(addr), handle(-1)
     {
-        if (gpioInitialise() < 0) {
-            throw std::runtime_error("pigpio initialization failed");
-        }
         handle = i2cOpen(i2cBus, i2cAddr, 0);
         if (handle < 0) {
-            gpioTerminate();
             throw std::runtime_error("Failed to open I2C device");
         }
+    }
+
+    // Delete copy constructor and copy assignment to avoid double-close
+    MegaHandler(const MegaHandler&) = delete;
+    MegaHandler& operator=(const MegaHandler&) = delete;
+
+    // Allow move semantics
+    MegaHandler(MegaHandler&& other) noexcept
+        : i2cBus(other.i2cBus), i2cAddr(other.i2cAddr), handle(other.handle), lastData(std::move(other.lastData))
+    {
+        other.handle = -1;
+    }
+    MegaHandler& operator=(MegaHandler&& other) noexcept {
+        if (this != &other) {
+            if (handle >= 0) i2cClose(handle);
+            i2cBus = other.i2cBus;
+            i2cAddr = other.i2cAddr;
+            handle = other.handle;
+            lastData = std::move(other.lastData);
+            other.handle = -1;
+        }
+        return *this;
     }
 
     ~MegaHandler() {
         if (handle >= 0) {
             i2cClose(handle);
         }
-        gpioTerminate();
     }
 
     // Send a command to Arduino Mega to request sensor data
