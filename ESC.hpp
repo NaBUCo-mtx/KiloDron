@@ -1,4 +1,5 @@
-#include <pigpio.h>
+// @ts-ignore
+#include <pigpio.h> // libreria para el raspberry pi. En otros dispositivos, dará error.
 #include <unistd.h>
 
 #ifndef ESC_HPP
@@ -104,4 +105,48 @@ class bicopter {
 
 };
 
+
+class quadcopter {
+    private:
+        int gpio_1, gpio_2, gpio_3, gpio_4, FREQ, RANGE, PULSE_MIN, PULSE_MAX;
+        PWM_ESC ESC_1, ESC_2, ESC_3, ESC_4;
+
+    public:
+        quadcopter(int esc1, int esc2, int esc3, int esc4, int freq, int range, int min, int max)
+        : ESC_1(esc1, freq, range, min, max),
+          ESC_2(esc2, freq, range, min, max),
+          ESC_3(esc3, freq, range, min, max),
+          ESC_4(esc4, freq, range, min, max),
+          gpio_1(esc1), gpio_2(esc2), gpio_3(esc3), gpio_4(esc4), FREQ(freq), RANGE(range), PULSE_MIN(min), PULSE_MAX(max)
+        {};
+
+        bool arm_motors(){
+            /*Arma los motores uno por uno.*/
+            ESC_1.arm_ESC();
+            ESC_2.arm_ESC();
+            ESC_3.arm_ESC();
+            ESC_4.arm_ESC();
+            return true;
+        };
+
+        bool setSpeeds(float speed_1, float speed_2, float speed_3, float speed_4){
+            /*establece las velocidades para los cuatro. Si quieres controlarlos individualmentes,
+            considera utilizar la clase PWM_ESC directamente*/
+            ESC_1.setSpeed(speed_1);
+            ESC_2.setSpeed(speed_2);
+            ESC_3.setSpeed(speed_3);
+            ESC_4.setSpeed(speed_4);
+            return true;
+        };
+
+        bool stop(){
+            /*Detiene los cuatro motores.*/
+            ESC_1.stop();
+            ESC_2.stop();
+            ESC_3.stop();
+            ESC_4.stop();
+            return true;
+        };
+
+};
 #endif
