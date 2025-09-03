@@ -6,7 +6,7 @@
 #include <tuple>
 #include <stdexcept>
 
-#ifndef M_PI
+#ifndef M_PIº
 #define M_PI 3.14159265358979323846
 #endif
 
