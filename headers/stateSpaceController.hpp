@@ -21,6 +21,6 @@ public:
     }
 
 private:
-    Eigen::VectorXd currentState;
     Eigen::MatrixXd A, B, C, D; // matrices de estado
+    Eigen::VectorXd u, x, y, x_dot; // Vectores de entrada, salida, y estado
 };
