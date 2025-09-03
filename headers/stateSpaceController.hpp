@@ -22,4 +22,5 @@ public:
 
 private:
     Eigen::VectorXd currentState;
+    Eigen::MatrixXd A, B, C, D; // matrices de estado
 };
